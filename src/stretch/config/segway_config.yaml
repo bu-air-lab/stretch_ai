@@ -1,0 +1,220 @@
+agent:
+  in_place_rotation_steps: 8
+  realtime:
+    camera_pose_match_threshold: 0.05
+    matching_distance: 0.5
+    maximum_matched_observations: 50
+    temporal_threshold: 0.1
+  sweep_head_on_update: false
+  use_realtime_updates: true
+captioning:
+  confidence_threshold: 0.2
+  enabled: true
+detection:
+  category_map_file: example_cat_map.json
+  confidence_threshold: 0.3
+  module: detic
+  use_detic_viz: true
+  vocabulary: coco
+encoder: clip
+encoder_args:
+  device: cuda:0
+  version: ViT-L/14@336px
+instance_memory:
+  mask_cropped_instances: false
+  max_instance_height: 1.8
+  max_instance_vol: 10.0
+  min_instance_height: 0.01
+  min_instance_thickness: 0.01
+  min_instance_vol: 1e-6
+  min_percent_for_instance_view: 0.05
+  min_pixels_for_instance_view: 50
+logging:
+  level: debug
+  log_directory: ~/segway_logs
+  log_to_file: true
+  max_log_files: 5
+  max_log_size_mb: 10
+mapping:
+  grid_resolution: 0.05
+  update_rate: 10.0
+  use_grid_map: true
+  use_instance: true
+  use_instance_map: true
+  use_scene_graph: true
+  voxel_size: 0.05
+min_points_per_voxel: 5
+monitoring:
+  check_interval: 1.0
+  critical_systems:
+  - bridge
+  - perception
+  - navigation
+  - sensors
+  - gpu
+  enabled: true
+motion:
+  angle_threshold: 0.1
+  joint_thresholds:
+    gripper_open_threshold: 0.3
+    head_not_moving_tolerance: 0.0001
+  joint_tolerance:
+    arm: 0.02
+    base_x: 0.02
+    head_pan: 0.01
+    head_tilt: 0.01
+    lift: 0.02
+    wrist_pitch: 0.1
+    wrist_roll: 0.1
+    wrist_yaw: 0.1
+  min_steps_not_moving: 2
+  moving_threshold: 0.01
+motion_planner:
+  algorithm: rrt_connect
+  frontier:
+    default_expand_frontier_size: 12
+    dilate_frontier_size: 2
+    dilate_obstacle_size: 4
+    min_dist: 0.1
+    step_dist: 0.2
+  goals:
+    manipulation_radius: 0.45
+  rotation_step_size: 0.1
+  shortcut_iter: 100
+  shortcut_plans: true
+  simplify:
+    max_step: 0.5
+    min_angle: 0.1
+    min_step: 0.05
+    num_steps: 8
+  simplify_plans: true
+  step_size: 0.05
+navigation:
+  controller_update_rate: 10.0
+  emergency_stop_distance: 0.2
+  exploration_goal_distance: 2.0
+  frontier_search_radius: 3.0
+  goal_tolerance_orientation: 0.15
+  goal_tolerance_position: 0.15
+  min_obstacle_distance: 0.3
+  obstacle_inflation: 0.3
+  path_simplification: true
+  planning_method: astar
+neg_obs_height: -0.05
+network:
+  bridge_port: 9090
+  connection_retries: 5
+  connection_retry_interval: 2.0
+  desktop_ip: 10.66.171.131
+  lidar_ip: 10.66.171.8
+  robot_ip: 10.66.171.191
+  timeout: 10.0
+obs_max_height: 1.8
+obs_min_density: 5
+obs_min_height: 0.1
+robot:
+  footprint_radius: 0.35
+  has_manipulator: false
+  max_angular_speed: 0.3
+  max_linear_speed: 0.3
+  model: segway_ros
+  sensors:
+    camera:
+      depth_scale: 0.001
+      enabled: true
+      fps: 30
+      frame_id: camera_link
+      height: 480
+      use_depth: true
+      width: 640
+    imu:
+      enabled: true
+      frame_id: imu_link
+      update_rate: 100.0
+    lidar:
+      enabled: true
+      frame_id: lidar_link
+      max_range: 10.0
+      min_range: 0.05
+      update_rate: 15.0
+ros_bridge:
+  auto_restart: false
+  services:
+    reset_mapping: /stretch/reset_mapping
+    set_manipulation_mode: /stretch/set_manipulation_mode
+    set_navigation_mode: /stretch/set_navigation_mode
+  tf_mappings:
+  - ros1_frame: base_link
+    ros2_frame: segway/base_link
+  - ros1_frame: lidar_link
+    ros2_frame: segway/lidar_link
+  - ros1_frame: camera_link
+    ros2_frame: camera_color_optical_frame
+  - ros1_frame: imu_link
+    ros2_frame: segway/imu_link
+  - ros1_frame: map
+    ros2_frame: map
+  - ros1_frame: odom
+    ros2_frame: odom
+  topics:
+    bridge_status: /ros_bridge/status
+    ros2_battery: /battery0
+    ros2_camera_info: /camera/color/camera_info
+    ros2_cmd_vel: /cmd_vel
+    ros2_depth: /camera/depth/image_rect_raw
+    ros2_imu: /imu
+    ros2_odom: /odom
+    ros2_point_cloud: /lidar_cloud
+    ros2_rgb: /camera/color/image_raw
+    ros2_scan: /scan
+    segway_battery: /segway/connection_status
+    segway_camera_info: /camera/color/camera_info
+    segway_cmd_vel: /cmd_vel
+    segway_depth: /camera/depth/image_rect_raw
+    segway_imu: /segway/feedback/imu
+    segway_odom: /segway/odom
+    segway_rgb: /camera/color/image_raw
+    segway_scan: /scan
+  use_ros1_to_ros2_bridge: true
+sam:
+  confidence_threshold: 0.5
+  model_type: vit_b
+  points_per_side: 32
+  pred_iou_thresh: 0.85
+scene_graph:
+  max_near_distance: 0.3
+  max_on_height: 0.2
+  min_on_height: 0.05
+  relationship_thresholds:
+    near:
+      distance: 0.3
+    next_to:
+      distance: 0.5
+      height_difference: 0.2
+    'on':
+      max_height: 0.2
+      min_height: 0.05
+      overlap_threshold: 0.4
+  relationship_types:
+  - 'on'
+  - near
+  - above
+  - under
+  - next_to
+  - behind
+  - in_front_of
+  update_frequency: 5
+trajectory_pos_err_threshold: 0.15
+trajectory_rot_err_threshold: 0.15
+tts_engine: gtts
+use_negative_obstacles: true
+use_scene_graph: true
+visualization:
+  enable_3d: true
+  enable_depth_view: true
+  enable_network_graph: true
+  enabled: true
+  fps_target: 5
+  update_rate: 1.0
+  window_height: 600
+  window_width: 800

@@ -825,9 +825,9 @@ class SparseVoxelMap(object):
             if K is None:
                 logger.warning(f"Skipping frame {i} with None intrinsics")
                 continue
-            if base_pose is None:
-                logger.warning(f"Skipping frame {i} with None base pose")
-                continue
+            # if base_pose is None:
+            #     logger.warning(f"Skipping frame {i} with None base pose")
+            #     continue
 
             camera_pose = self.fix_data_type(camera_pose)
             if compressed:
@@ -845,7 +845,7 @@ class SparseVoxelMap(object):
             instance_classes = None
             instance_scores = None
             if perception is not None:
-                _, instance, info = perception.predict_segmentation(
+                mask, instance, info = perception.predict_segmentation(
                     rgb=rgb, depth=depth, base_pose=base_pose
                 )
                 instance_classes = info["instance_classes"]
@@ -1236,8 +1236,8 @@ class SparseVoxelMap(object):
         traversible = explored & ~obstacles
 
         if add_planner_visuals:
-            geoms += self._get_boxes_from_points(traversible, [0, 1, 0])
-            geoms += self._get_boxes_from_points(obstacles, [1, 0, 0])
+            # geoms += self._get_boxes_from_points(traversible, [0, 1, 0])
+            # geoms += self._get_boxes_from_points(obstacles, [1, 0, 0])
 
             if xyt is not None and footprint is not None:
                 geoms += self._get_boxes_from_points(

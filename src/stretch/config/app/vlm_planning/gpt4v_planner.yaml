@@ -6,9 +6,13 @@ min_points_per_voxel: 15
 exp_min_density: 1
 
 encoder: "dinov2siglip"
-encoder_args: "google/siglip-base-patch16-224"
+encoder_args: 
+  model_name: "google/siglip-base-patch16-224"
 tts_engine: "gTTS"
 open_vocab_category_map_file: example_cat_map.json
+
+task:
+  command: "go to the left most cabinet"  # Example: "navigate_to_kitchen"
 
 # Sparse Voxel Map parameters
 voxel_size: 0.01

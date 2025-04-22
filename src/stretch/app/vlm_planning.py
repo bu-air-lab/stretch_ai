@@ -170,9 +170,9 @@ def main(
         vlm_parameters.set("command", task)
 
     print("Creating semantic sensors...")
-    semantic_sensor = create_semantic_sensor(parameters=vlm_parameters)
+    semantic_sensor = create_semantic_sensor(config_path=config_path)
 
-    if len(input_path) > 0:
+    if len(str(input_path)) > 0:  # Convert to string explicitly
         robot = DummyStretchClient()
     else:
         robot = HomeRobotZMQClient(robot_ip=robot_ip, local=local)
@@ -186,7 +186,7 @@ def main(
     )
     voxel_map = agent.get_voxel_map()
 
-    if len(input_path) > 0:
+    if len(str(input_path)) > 0:  # Convert to string explicitly
         # load from pickle
         voxel_map.read_from_pickle(input_path, num_frames=frame, perception=semantic_sensor)
     else:
@@ -205,6 +205,58 @@ def main(
     #     num_frames=frame,
     #     frame_skip=frame_skip,
     # )
+    # Xinwei test scene graph
+    #==========================================================================================================
+    vlm_parameters = get_parameters(config_path)
+    instances = voxel_map.get_instances()
+    if not instances:
+        print("No instances found in the voxel map.")
+    else:
+        print(f"Found {len(instances)} instances in the voxel map:")
+        for idx, instance in enumerate(instances):
+            print(f"Instance {idx}:")
+            print(f"  ID: {instance.get_instance_id()}")
+            print(f"  Point Cloud Size: {len(instance.point_cloud)}")
+            print(f"  Bounding Box: {instance.bounds}")
+            print(f"  Semantic Label: {instance.get_category_id()}")
+
+    from stretch.mapping.scene_graph.scene_graph import SceneGraph
+    scene_graph = SceneGraph(parameters=vlm_parameters, instances=instances)
+    scene_graph.update(instances)
+    relationships = scene_graph.get_relationships(debug=True)
+    print(f"Relations from scene: {relationships}")
+    for rel in relationships:
+        print(f"Instance {rel[0]} is {rel[2]} Instance {rel[1]}")
+
+    # Get all instances from the voxel map
+    import matplotlib.pyplot as plt
+    instances = voxel_map.get_instances()
+
+    if not instances:
+        print("No instances found in the voxel map.")
+    else:
+        print(f"Found {len(instances)} instances in the voxel map.")
+
+        # Initialize the SceneGraph
+        scene_graph = SceneGraph(parameters=vlm_parameters, instances=instances)
+
+        # Iterate through all instances and plot their images
+        for idx, instance in enumerate(instances):
+            try:
+                # Get the viewable image for the current instance
+                image = scene_graph.get_instance_image(idx)
+
+                # Plot the image
+                plt.figure()
+                plt.imshow(image)
+                plt.title(f"Instance {idx} (ID: {instance.get_instance_id()})")
+                plt.axis("off")
+                plt.show()
+
+            except Exception as e:
+                print(f"Error processing instance {idx}: {e}")
+    #==========================================================================================================
+    test_vlm = True
     run_vlm_planner(agent, task, show_svm, test_vlm, api_key, show_instances)
 
 
@@ -228,8 +280,8 @@ def run_vlm_planner(
     """
 
     # TODO: read this from file
-    x0 = np.array([0, 0, 0])
-    # x0 = np.array([0, -0.5, 0])  # for room1, room4
+    # x0 = np.array([0, 0, 0])
+    x0 = np.array([0, -0.5, 0])  # for room1, room4
     # x0 = np.array([-1.9, -0.8, 0])  # for room2
     # x0 = np.array([0, 0.5, 0])  # for room3, room5
     start_xyz = [x0[0], x0[1], 0]

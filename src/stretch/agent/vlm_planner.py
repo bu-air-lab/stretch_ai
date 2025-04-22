@@ -34,7 +34,7 @@ class VLMPlanner:
         temperature = 0.2
         max_tokens = 50
         with open(
-            "src/stretch/llms/prompts/obj_centric_vlm.txt",
+            "/home/xin3/Desktop/stretch_ai_xin/src/stretch/llms/prompts/obj_centric_vlm.txt",
             "r",
         ) as f:
             prompt = f.read()

@@ -267,6 +267,7 @@ class SparseVoxelMapNavigationSpace(XYT):
         # Now sample mask at this location
         mask = self.get_oriented_mask(state[-1])
         assert mask.shape[0] == mask.shape[1], "square masks only for now"
+        mask = torch.zeros_like(mask)
         dim = mask.shape[0]
         half_dim = dim // 2
         grid_xy = self.voxel_map.grid.xy_to_grid_coords(state[:2])
@@ -293,6 +294,21 @@ class SparseVoxelMapNavigationSpace(XYT):
         crop_exp = explored[x0:x1, y0:y1]
         assert mask.shape == crop_obs.shape
         assert mask.shape == crop_exp.shape
+
+        # print(f"Grid XY: {grid_xy}, Mask Dim: {dim}, Crop: ({x0}:{x1}, {y0}:{y1})")
+        # import matplotlib.pyplot as plt
+
+        # plt.figure(figsize=(12, 4))
+        # plt.subplot(1, 3, 1)
+        # plt.imshow(crop_obs.cpu().numpy())
+        # plt.title("Cropped Obstacles")
+        # plt.subplot(1, 3, 2)
+        # plt.imshow(mask.cpu().numpy())
+        # plt.title("Robot Mask")
+        # plt.subplot(1, 3, 3)
+        # plt.imshow((crop_obs & mask).cpu().numpy())
+        # plt.title("Overlap (Collision)")
+        # plt.show()
 
         collision = torch.any(crop_obs & mask)
 

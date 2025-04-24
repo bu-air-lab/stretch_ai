@@ -2280,7 +2280,7 @@ class RobotAgent:
                 crop = torch.from_numpy(crop)
             candidate_objects.append((crop, global_id, features))
 
-        max_context_length = 20
+        max_context_length = 40
         if len(candidate_objects) >= max_context_length:
             logger.warning(
                 f"\nWarning: VLMs can only handle limited size of crops -- ignoring instances using strategy: {sample_strategy}..."

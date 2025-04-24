@@ -12,7 +12,7 @@ tts_engine: "gTTS"
 open_vocab_category_map_file: example_cat_map.json
 
 task:
-  command: "go to the left most cabinet"  # Example: "navigate_to_kitchen"
+  command: "move the yellow box to the tv area"  # Example: "navigate_to_kitchen"
 
 # Sparse Voxel Map parameters
 voxel_size: 0.01

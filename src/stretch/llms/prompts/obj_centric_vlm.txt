@@ -42,5 +42,7 @@ Example D:
 4. Answer: explore
 (Explanation: All images provided are useless. No scene descriptions. Simply output explore)
 
+When generating a plan, please make sure to reason what the intention of the user might want even if they did not state it specifically.
+
 Your turn:
 1. Images: 

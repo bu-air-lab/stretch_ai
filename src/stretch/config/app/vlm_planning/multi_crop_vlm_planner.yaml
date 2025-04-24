@@ -6,16 +6,16 @@ voxel_size: 0.04
 
 pad_obstacles: 1
 
-# detection:
-#   module: sam2
-#   category_map_file: example_cat_map.json
+detection:
+  module: detic
+  category_map_file: example_cat_map.json
 
 # TAMP parameters
 guarantee_instance_is_reachable: True
 plan_with_reachable_instances: True
 plan_with_scene_graph: False
 scene_graph:
-  max_near_distance: 0.3
+  max_near_distance: 0.1
   min_on_height: 0.05
   max_on_height: 0.2
 
@@ -27,4 +27,4 @@ vlm:
   sample_strategy: "clip"
 
 task:
-  command: "Pick up a basket."
+  command: "move the green poster to the place where you can watch netflix and find a place where you can write something"

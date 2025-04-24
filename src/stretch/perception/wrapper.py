@@ -42,7 +42,7 @@ class OvmmPerception:
         self.parameters = parameters
         self._use_detic_viz = self.parameters.get("detection/use_detic_viz", False)
         self._detection_module = self.parameters.get("detection/module", "detic")
-        self._confidence_threshold = self.parameters.get("detection/confidence_threshold", 0.5)
+        self._confidence_threshold = self.parameters.get("detection/confidence_threshold", 0.2)
         self._vocabularies: Dict[int, RearrangeDETICCategories] = {}
         self._current_vocabulary: RearrangeDETICCategories = None
         self._current_vocabulary_id: int = None
@@ -66,6 +66,15 @@ class OvmmPerception:
                 confidence_threshold=self._confidence_threshold,
                 **module_kwargs,
             )
+            # module_kwargs.update({
+            #     "model_config": "path/to/Detic_LCOCOI21k_CLIP_SwinB_config.yaml",
+            #     "model_weights": "/home/xin3/Desktop/stretch_ai_xin/src/stretch/perception/detection/detic/Detic/models/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.pth",
+            #     "input_size": 896,  # Matches the "896" in model name
+            #     "max_detections": 300,  # Increase for cluttered scenes
+            #     "box_threshold": 0.15,  # Lower than default for small objects
+            #     "text_encoder_type": "clip"  # CLIP-based model
+            # })
+
             print("---- DETIC PERCEPTION OBJECT CREATED ----")
 
             obj_name_to_id, rec_name_to_id = read_category_map_file(category_map_file)
@@ -222,7 +231,9 @@ class OvmmPerception:
         """
         if base_pose is None:
             base_pose = torch.tensor([0.0, 0.0, 0.0])
+        import numpy as np
         obs = Observations(rgb=rgb, depth=depth, gps=base_pose[0:2], compass=base_pose[2])
+                # Before calling self.predictor.set_image(rgb)
         obs = self.predict(obs)
         return obs.semantic, obs.instance, obs.task_observations
 

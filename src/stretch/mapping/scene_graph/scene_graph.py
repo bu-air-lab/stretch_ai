@@ -51,6 +51,13 @@ class SceneGraph:
                     "on",
                 ) not in self.relationships:
                     self.relationships.append((ins_a.global_id, ins_b.global_id, "on"))
+
+                if self.above(ins_a.global_id, ins_b.global_id):
+                    if (ins_a.global_id, ins_b.global_id, "above") not in self.relationships:
+                        self.relationships.append((ins_a.global_id, ins_b.global_id, "above"))
+                    if (ins_b.global_id, ins_a.global_id, "below") not in self.relationships:
+                        self.relationships.append((ins_b.global_id, ins_a.global_id, "below"))
+                
             # Add "on floor" relationship for if something is on the floor
             if self.on_floor(ins_a.global_id):
                 self.relationships.append((ins_a.global_id, "floor", "on"))
@@ -134,7 +141,7 @@ class SceneGraph:
                 plt.imshow(img_b)
                 plt.title("Instance B")
                 plt.axis("off")
-                # plt.show()
+                plt.show()
                 plt.savefig(get_path_to_debug(f"scene_graph_{idx_a}_{idx_b}_{rel}.png"))
 
         # Return the detected relationships in list form
@@ -158,6 +165,18 @@ class SceneGraph:
             ):
                 return True
         return False
+
+    def above(self, ins_a, ins_b):
+        """Check if ins_a is above ins_b. They must be near and vertically separated by more than max_on_height."""
+        if not self.near(ins_a, ins_b):
+            return False
+        z_a = self.get_ins_center_pos(ins_a)[2].item()
+        z_b = self.get_ins_center_pos(ins_b)[2].item()
+        return (z_a - z_b) > self.parameters["scene_graph"]["max_on_height"]
+
+    def below(self, ins_a, ins_b):
+        """Check if ins_a is below ins_b. They must be near and vertically separated by more than max_on_height."""
+        return self.above(ins_b, ins_a)
 
     def on_floor(self, ins_a):
         """Check if an instance is on the floor"""

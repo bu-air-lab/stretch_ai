@@ -10,3 +10,6 @@
 [submodule "third_party/ok-robot"]
 	path = third_party/ok-robot
 	url = https://github.com/peiqi-liu/ok-robot
+[submodule "third_party/CenterNet2"]
+	path = third_party/CenterNet2
+	url = https://github.com/username/CenterNet2.git

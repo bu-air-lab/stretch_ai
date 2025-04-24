@@ -125,6 +125,13 @@ class SAMPerception(PerceptionModule):
         """
 
         t0 = timeit.default_timer()
+
+        
+        # Debug
+        print("Final RGB shape:", rgb.shape)
+        print("Final RGB dtype:", rgb.dtype)
+    
+        print(rgb.shape)
         self.predictor.set_image(rgb)
 
         if point_coords is not None and point_labels is not None:

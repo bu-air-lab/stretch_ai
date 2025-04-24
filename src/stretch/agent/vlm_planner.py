@@ -13,6 +13,15 @@ from typing import Optional
 from stretch.agent.robot_agent import RobotAgent
 from stretch.llms.multi_crop_openai_client import MultiCropOpenAIClient
 
+import json
+
+# Load the category mapping at the top of your file or in __init__
+with open("/home/xin3/Desktop/stretch_ai_xin/src/stretch/config/example_cat_map.json", "r") as f:
+    category_data = json.load(f)
+obj_id_to_category = {v: k for k, v in category_data["obj_category_to_obj_category_id"].items()}
+id_to_names = category_data["id_to_names"]
+# Ensure the path to the JSON file is correct
+
 
 class VLMPlanner:
     def __init__(self, agent: RobotAgent, api_key: Optional[str] = None) -> None:
@@ -34,7 +43,7 @@ class VLMPlanner:
         temperature = 0.2
         max_tokens = 50
         with open(
-            "src/stretch/llms/prompts/obj_centric_vlm.txt",
+            "/home/xin3/Desktop/stretch_ai_xin/src/stretch/llms/prompts/obj_centric_vlm.txt",
             "r",
         ) as f:
             prompt = f.read()
@@ -109,11 +118,21 @@ class VLMPlanner:
                 for action_id, action in enumerate(actions):
                     crop_id = int(re.search(r"img_(\d+)", action).group(1))
                     global_id = world_representation.object_images[crop_id].instance_id
+                    instance = self.voxel_map.get_instances()[global_id]
+                    category_id = getattr(instance, "category_id", None)
+                    # Ensure category_id is int for lookup
+                    try:
+                        category_id_int = int(category_id)
+                    except Exception:
+                        category_id_int = category_id
+                    # Get the category name from the mapping
+                    category_names = id_to_names.get(str(category_id), ["unknown"])
+                    category_name_str = ", ".join(category_names)
+
+                    print(f"Action: {action}, Instance {global_id}, Category: {category_name_str}, Semantic ID: {category_id_int}")
                     plt.subplot(1, len(actions), action_id + 1)
-                    plt.imshow(
-                        self.voxel_map.get_instances()[global_id].get_best_view().get_image()
-                    )
-                    plt.title(action.split("(")[0] + f" instance {global_id}")
+                    plt.imshow(instance.get_best_view().get_image())
+                    plt.title(f"{action.split('(')[0]}\n{category_name_str} ({global_id})\nID: {category_id_int}")
                     plt.axis("off")
                 plt.suptitle(f"Task: {query}")
                 plt.show()

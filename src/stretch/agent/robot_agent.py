@@ -269,6 +269,14 @@ class RobotAgent:
             self._update_map_thread = None
             self._get_observations_thread = None
 
+    def get_parameters(self) -> Parameters:
+        """Return the parameters for this model"""
+        return self.parameters
+    
+    def get_semantic_sensor(self) -> OvmmPerception:
+        """Return the semantic sensor in use by this model"""
+        return self.semantic_sensor
+
     def get_robot(self) -> AbstractRobotClient:
         """Return the robot in use by this model"""
         return self.robot
@@ -2272,6 +2280,7 @@ class RobotAgent:
                 crop = torch.from_numpy(crop)
             candidate_objects.append((crop, global_id, features))
 
+        max_context_length = 40
         if len(candidate_objects) >= max_context_length:
             logger.warning(
                 f"\nWarning: VLMs can only handle limited size of crops -- ignoring instances using strategy: {sample_strategy}..."
